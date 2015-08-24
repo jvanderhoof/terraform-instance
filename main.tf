@@ -11,14 +11,13 @@ variable "instance_type" {
   default = "m3.medium"
 }
 
-variable "instance_count" {
+variable "count" {
   default = "1"
 }
 
 variable "additional_security_group_ids" {
   default = " "
 }
-
 
 resource "aws_security_group" "ssh_traffic" {
   name = "${var.name}-${var.environment}-ssh_traffic"
@@ -49,7 +48,7 @@ resource "aws_instance" "web" {
   instance_type = "${var.instance_type}"
   key_name = "${var.ssh_key}"
   subnet_id = "${var.subnet_id}"
-  count = "${var.instance_count}"
+  count = "${var.count}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = ["${split(",", replace("${aws_security_group.ssh_traffic.id},${aws_security_group.node_security_group.id},${var.additional_security_group_ids}", ", ", ""))}"]
